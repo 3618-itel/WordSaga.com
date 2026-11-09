@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Saga - EA playdream (2011)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Sniglet:wght@800&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --fb-blue: #3b5998;
+            --fb-dark: #2d4373;
+            --fb-bg: #e9eef5;
+        }
+
+        body {
+            font-family: 'Lucida Grande', Tahoma, Verdana, Arial, sans-serif;
+            background-color: var(--fb-bg);
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            color: #333;
+        }
+
+        /* RETRO 2011 FACEBOOK HEADER */
+        .fb-header {
+            background: linear-gradient(180deg, #4c66a4 0%, #3b5998 100%);
+            border-bottom: 1px solid #1d2e5b;
+            height: 42px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+
+        /* EXACT 740x700 GAME CONTAINER (730px + 10px = 740px) */
+        #gameFrame {
+            width: 740px;
+            height: 700px;
+            min-width: 740px;
+            max-width: 740px;
+            min-height: 700px;
+            max-height: 700px;
+            position: relative;
+            overflow: hidden;
+            background: #2b1704 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%23381e08"/><path d="M0 0h40v40H0z" fill="none" stroke="%23241203" stroke-width="2"/></svg>');
+            border: 5px solid #5a3111;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            font-family: 'Sniglet', 'Fredoka One', cursive;
+        }
+
+        /* SPLASH SCREEN & TRANSITION */
+        .splash-screen {
+            position: absolute;
+            inset: 0;
+            z-index: 100;
+            transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out;
+        }
+
+        .splash-phase1 {
+            background: radial-gradient(circle, #1a233a 0%, #090c14 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .splash-phase2 {
+            background: radial-gradient(circle, #7a3e14 0%, #381a06 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease-in-out;
+            padding: 30px 20px;
+        }
+
+        /* Parchment & Wood Skeuomorphic Panels */
+        .parchment-bg {
+            background: #f5e4bf linear-gradient(135deg, #f9ebd2 0%, #ecd6a9 50%, #e0c592 100%);
+            border: 3px solid #784519;
+            box-shadow: inset 0 0 20px rgba(110, 60, 15, 0.3);
+            border-radius: 14px;
+        }
+
+        .wood-panel {
+            background: linear-gradient(180deg, #915426 0%, #613410 50%, #442208 100%);
+            border: 3px solid #d49853;
+            box-shadow: 0 4px 0 #200f03, 0 6px 12px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.4);
+            border-radius: 12px;
+        }
+
+        /* KING GLOSSY BUTTONS */
+        .king-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka One', cursive;
+            text-transform: uppercase;
+            text-shadow: 0 2px 2px rgba(0,0,0,0.6);
+            border-radius: 999px;
+            cursor: pointer;
+            transition: transform 0.08s ease, filter 0.15s ease;
+        }
+        .king-btn:hover { filter: brightness(1.1); transform: scale(1.03); }
+        .king-btn:active { transform: translateY(2px) scale(0.97); }
+
+        .btn-green {
+            background: linear-gradient(180deg, #7ee629 0%, #3cae0a 50%, #1e7003 100%);
+            border: 2px solid #b8ff73;
+            color: #fff;
+            box-shadow: 0 4px 0 #0d4201, inset 0 2px 3px rgba(255,255,255,0.8);
+        }
+        .btn-yellow {
+            background: linear-gradient(180deg, #ffea3d 0%, #ff9d00 50%, #c46000 100%);
+            border: 2px solid #fff399;
+            color: #fff;
+            box-shadow: 0 4px 0 #6e3300, inset 0 2px 3px rgba(255,255,255,0.9);
+        }
+        .btn-blue {
+            background: linear-gradient(180deg, #3bd6ff 0%, #088dbd 50%, #035270 100%);
+            border: 2px solid #99edff;
+            color: #fff;
+            box-shadow: 0 4px 0 #012e40, inset 0 2px 3px rgba(255,255,255,0.8);
+        }
+
+        .wordsaga-title {
+            font-family: 'Fredoka One', cursive;
+            color: #fff3a8;
+            text-shadow: 
+                -2px -2px 0 #5c2c06,  
+                 2px -2px 0 #5c2c06,
+                -2px  2px 0 #5c2c06,
+                 2px  2px 0 #5c2c06,
+                 0px  5px 0 #361701;
+        }
+
+        /* LETTER TILES */
+        .letter-tile {
+            aspect-ratio: 1;
+            font-family: 'Fredoka One', cursive;
+            color: #4a2807;
+            background: linear-gradient(180deg, #fff7dc 0%, #f7dfa1 60%, #e0bd6c 100%);
+            border: 2px solid #7a4617;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 2px rgba(255,255,255,0.95), 0 3px 0 #422206;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.08s ease;
+        }
+        .letter-tile.selected {
+            background: linear-gradient(180deg, #fffa78 0%, #ffb700 60%, #d47a00 100%);
+            color: #3b1400;
+            border-color: #ffffff;
+            box-shadow: inset 0 2px 2px rgba(255,255,255,0.95), 0 0 12px #ffaa00, 0 3px 0 #6e3300;
+            transform: scale(1.08);
+            z-index: 15;
+        }
+        .letter-tile.found {
+            background: linear-gradient(180deg, #99ff66 0%, #37cd1c 60%, #1f8a0a 100%);
+            color: #ffffff;
+            border-color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+            box-shadow: inset 0 2px 2px rgba(255,255,255,0.9), 0 3px 0 #0f4a04;
+        }
+        .letter-tile.hinted {
+            animation: hintPulse 0.5s infinite alternate;
+        }
+
+        @keyframes hintPulse {
+            0% { background: #ff4785; color: #fff; }
+            100% { background: #ffd700; color: #4a2807; }
+        }
+
+        /* MAP NODES & WORLDS */
+        .map-node {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, #ffd700 0%, #ff8800 100%);
+            border: 3px solid #ffffff;
+            box-shadow: 0 4px 0 #6e3300, 0 6px 10px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #fff;
+            text-shadow: 0 2px 2px #471d00;
+            cursor: pointer;
+            position: relative;
+        }
+        .map-node.locked {
+            background: linear-gradient(180deg, #a3a3a3 0%, #595959 100%);
+            border-color: #d1d1d1;
+            box-shadow: 0 3px 0 #2e2e2e;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        .map-node.current {
+            animation: nodeBounce 1s infinite alternate;
+            box-shadow: 0 0 20px #ffe600, 0 4px 0 #6e3300;
+        }
+        @keyframes nodeBounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-6px); }
+        }
+
+        .word-pill {
+            background: linear-gradient(180deg, #fff7e6 0%, #ebd4a7 100%);
+            color: #573110;
+            border: 1.5px solid #a36934;
+            border-radius: 10px;
+            padding: 2px 7px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            box-shadow: 0 2px 0 #422105;
+        }
+        .word-pill.found-pill {
+            background: linear-gradient(180deg, #ff80b3 0%, #d91a6c 100%);
+            color: #fff;
+            border-color: #ffcce6;
+            text-decoration: line-through;
+            opacity: 0.85;
+            box-shadow: 0 2px 0 #6e002c;
+        }
+
+        #particleCanvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 740px; height: 700px;
+            pointer-events: none;
+            z-index: 90;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- FACEBOOK 2011 HEADER BAR -->
+    <header class="fb-header w-full flex items-center justify-between px-4 fixed top-0 left-0 z-50">
+        <div class="flex items-center gap-4">
+            <span class="text-white font-bold text-xl tracking-tighter" style="font-family: Tahoma, Arial, sans-serif;">facebook</span>
+            <div class="hidden sm:flex items-center">
+                <input type="text" placeholder="Rechercher des amis, des jeux..." class="bg-white border border-[#1d3162] px-2 py-0.5 text-xs rounded-xs w-52">
+                <button class="bg-[#3b5998] border border-[#1d3162] text-white px-2 py-0.5 text-xs font-bold -ml-1">🔍</button>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 text-xs text-blue-100 font-bold">
+            <span class="hover:underline cursor-pointer">Accueil</span>
+            <span class="hover:underline cursor-pointer">Profil</span>
+            <span class="hover:underline cursor-pointer">EA playdream Games (2011)</span>
+        </div>
+    </header>
+
+    <!-- MAIN PAGE CONTAINER -->
+    <div class="pt-14 pb-6 max-w-[1100px] mx-auto flex justify-start gap-4 px-2">
+
+        <!-- LEFT SIDEBAR -->
+        <div class="w-44 text-xs space-y-3 pt-1 shrink-0">
+            <div class="font-bold text-gray-500 uppercase text-[10px]">Favoris</div>
+            <ul class="space-y-1 text-gray-700">
+                <li class="flex items-center gap-2 font-bold text-blue-900 bg-blue-100/80 p-1.5 rounded"><span class="text-base">🐭</span> Word Saga</li>
+                <li class="flex items-center gap-2 hover:bg-gray-200 p-1.5 rounded cursor-pointer"><span>📰</span> Fil d'actualités</li>
+                <li class="flex items-center gap-2 hover:bg-gray-200 p-1.5 rounded cursor-pointer"><span>💬</span> Messages</li>
+                <li class="flex items-center gap-2 hover:bg-gray-200 p-1.5 rounded cursor-pointer"><span>🎮</span> EA playdream Centre</li>
+            </ul>
+            <hr class="border-gray-300">
+            <div class="font-bold text-gray-500 uppercase text-[10px]">10 Mondes Word Saga</div>
+            <div id="worldListMenu" class="space-y-1 text-[11px] text-gray-600 max-h-56 overflow-y-auto pr-1">
+                <!-- Dynamic World Navigation -->
+            </div>
+        </div>
+
+        <!-- CENTER/MAIN CONTENT: FIXED 740x700 GAME CONTAINER FRAME -->
+        <div class="flex flex-col items-start shrink-0">
+            
+            <!-- FB App Header Bar -->
+            <div class="w-[740px] flex justify-between items-center mb-1 text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-blue-900 text-sm">Word Saga</span>
+                    <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded text-[10px] border border-amber-300 font-bold">EA playdream • 100 Niveaux</span>
+                </div>
+                <div class="flex gap-2">
+                    <span class="bg-white border border-gray-300 px-2 py-0.5 rounded text-[11px] font-bold text-amber-900">🧀 Vies: 5/5</span>
+                    <button class="bg-[#4267b2] hover:bg-[#365899] text-white px-2 py-0.5 text-[11px] font-bold rounded">👍 J'aime (3.4M)</button>
+                </div>
+            </div>
+
+            <!-- FIXED 740x700 FRAME -->
+            <div id="gameFrame">
+                
+                <!-- 11-SECOND LOADING SCREEN / SPLASH SCREEN WITH FADE TRANSITION -->
+                <div id="splashContainer" class="splash-screen">
+                    <!-- Phase 1: EA playdream (0s à 4s) -->
+                    <div id="splash1" class="splash-screen splash-phase1">
+                        <div class="text-center px-4">
+                            <div class="text-amber-400 font-black tracking-widest text-xs uppercase mb-2">Éditeur Gerlandais</div>
+                            <h1 class="text-5xl font-black text-white tracking-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]" style="font-family: 'Fredoka One', cursive;">
+                                EA <span class="text-amber-400">playdream</span>
+                            </h1>
+                            <div class="w-16 h-1 bg-amber-400 mx-auto my-4 rounded-full"></div>
+                            <p class="text-gray-400 text-xs italic">Présente une création originale 2011</p>
+                        </div>
+                    </div>
+
+                    <!-- Phase 2: Game Intro + Characters Mulot & Souris (4s à 11s) -->
+                    <div id="splash2" class="splash-screen splash-phase2">
+                        <div class="text-center mt-6">
+                            <h1 class="wordsaga-title text-4xl mb-1">Word <span class="text-yellow-400">Saga</span></h1>
+                            <p class="text-amber-200 text-xs font-bold">L'Aventure Alphabétique du Mulot & de la Souris</p>
+                        </div>
+
+                        <!-- Mascots Characters Box -->
+                        <div class="flex items-center justify-center gap-8 my-4">
+                            <!-- Mulot -->
+                            <div class="flex flex-col items-center bg-amber-950/60 p-4 rounded-2xl border-2 border-amber-500/50 shadow-xl">
+                                <div class="text-6xl mb-1 filter drop-shadow-md">🐭</div>
+                                <span class="text-yellow-300 font-black text-sm">Barnabé</span>
+                                <span class="text-amber-200 text-[10px] uppercase font-bold">Le Mulot Aventurier</span>
+                            </div>
+                            <!-- Souris -->
+                            <div class="flex flex-col items-center bg-amber-950/60 p-4 rounded-2xl border-2 border-amber-500/50 shadow-xl">
+                                <div class="text-6xl mb-1 filter drop-shadow-md">🐹</div>
+                                <span class="text-yellow-300 font-black text-sm">Célestine</span>
+                                <span class="text-amber-200 text-[10px] uppercase font-bold">La Souris Érudite</span>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar & Status -->
+                        <div class="w-full max-w-md bg-amber-950/80 p-4 rounded-xl border-2 border-amber-600 mb-6">
+                            <div class="flex justify-between text-xs text-amber-200 font-bold mb-1">
+                                <span>Chargement du jeu...</span>
+                                <span id="loadPercent">0%</span>
+                            </div>
+                            <div class="w-full bg-amber-950 h-4 rounded-full overflow-hidden border border-amber-700">
+                                <div id="splashProgressBar" class="h-full bg-gradient-to-r from-yellow-400 via-amber-400 to-green-400 w-0 transition-all duration-300"></div>
+                            </div>
+                            <div class="text-center text-[10px] text-amber-300 mt-2">© 2011 EA playdream - Tous droits réservés</div>
+                        </div>
+                    </div>
+                </div>
+
+                <canvas id="particleCanvas" width="740" height="700"></canvas>
+
+                <!-- HEADER INSIDE GAME FRAME -->
+                <div class="text-center pt-2 pb-0 relative z-10">
+                    <h1 class="wordsaga-title text-2xl tracking-wide flex items-center justify-center gap-2">
+                        <span>🐭</span> Word <span class="text-amber-400">Saga</span> <span>🐹</span>
+                    </h1>
+                </div>
+
+                <!-- VIEW 1: SAGA MAP (100 Niveaux / 10 Mondes) -->
+                <div id="mapView" class="w-full h-[645px] px-4 py-1 flex flex-col items-center justify-between relative z-10">
+                    
+                    <!-- World Selector Header -->
+                    <div class="w-full flex items-center justify-between parchment-bg px-4 py-1.5 shadow-md">
+                        <button onclick="changeWorld(-1)" class="king-btn btn-blue text-xs px-3 py-1">&laquo; Monde Prec.</button>
+                        <div class="text-center">
+                            <h2 id="worldTitle" class="text-sm font-black text-amber-950 uppercase">Monde 1: La Cuisine des Souris</h2>
+                            <span id="worldSub" class="text-[10px] text-amber-900 font-bold block">Niveaux 1 à 10</span>
+                        </div>
+                        <button onclick="changeWorld(1)" class="king-btn btn-blue text-xs px-3 py-1">Monde Suiv. &raquo;</button>
+                    </div>
+
+                    <!-- Scrollable Map Path -->
+                    <div id="sagaMap" class="w-full h-[510px] py-4 flex flex-col-reverse items-center gap-4 overflow-y-auto relative">
+                        <!-- Dynamic Nodes for the selected world -->
+                    </div>
+
+                    <div class="pb-1 flex flex-wrap items-center justify-center gap-3">
+                        <button onclick="downloadProgress()" class="king-btn btn-green text-[10px] px-3 py-1">
+                            ⬇ Télécharger ma progression
+                        </button>
+                        <button onclick="document.getElementById('progressFileInput').click()" class="king-btn btn-blue text-[10px] px-3 py-1">
+                            ⬆ Importer une progression
+                        </button>
+                        <input id="progressFileInput" type="file" accept=".json,application/json" class="hidden" onchange="importProgress(event)">
+                        <button onclick="resetProgress()" class="text-[10px] text-amber-300 underline hover:text-white cursor-pointer">
+                            Réinitialiser la progression
+                        </button>
+                        <span id="saveStatus" class="text-[9px] text-amber-200">💾 Sauvegarde automatique activée</span>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: GAMEPLAY BOARD WITH LEFT-SIDE PANEL DISPOSITION -->
+                <div id="gameView" class="w-full h-[645px] px-3 py-2 hidden flex-row items-center justify-between gap-3 relative z-10">
+                    
+                    <!-- LEFT SIDE PANEL (Includes Info, Target Words & Mascots) -->
+                    <div class="w-[245px] h-[620px] flex flex-col justify-between shrink-0 gap-2">
+                        
+                        <!-- Level Info & Score Panel -->
+                        <div class="wood-panel p-2.5 flex flex-col gap-2">
+                            <div class="flex justify-between items-center">
+                                <button onclick="showMap()" class="king-btn btn-blue text-[10px] px-2 py-1">
+                                    &laquo; Carte
+                                </button>
+                                <div class="text-center">
+                                    <span id="levelTitle" class="text-xs font-bold text-amber-200 block">Niveau 1</span>
+                                    <span id="levelTheme" class="text-[10px] text-yellow-300 font-bold block leading-tight">La Cuisine</span>
+                                </div>
+                                <button onclick="useHint()" class="king-btn btn-yellow text-[10px] px-2 py-1" title="Révèle un mot caché">
+                                    💡 Indice
+                                </button>
+                            </div>
+
+                            <hr class="border-amber-700/60">
+
+                            <!-- Timer & Score -->
+                            <div class="flex justify-between items-center text-xs">
+                                <span id="timerDisplay" class="font-bold text-yellow-200">⏱️ 00:00</span>
+                                <div class="text-right">
+                                    <span class="text-[9px] text-amber-200 block">SCORE</span>
+                                    <span id="scoreDisplay" class="text-sm text-yellow-300 font-black">0</span>
+                                </div>
+                            </div>
+
+                            <!-- Star Gauge -->
+                            <div class="flex items-center gap-1.5 mt-1">
+                                <div class="flex-1 bg-amber-950 border border-amber-600 rounded-full h-3 relative overflow-hidden">
+                                    <div id="starFill" class="bg-gradient-to-r from-yellow-400 to-amber-500 h-full w-0 transition-all duration-300"></div>
+                                </div>
+                                <div class="flex gap-0.5 text-[11px]">
+                                    <span id="star1" class="opacity-40 grayscale">⭐</span>
+                                    <span id="star2" class="opacity-40 grayscale">⭐</span>
+                                    <span id="star3" class="opacity-40 grayscale">⭐</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Target Words Panel (LEFT SIDE) -->
+                        <div class="wood-panel p-2 flex-1 flex flex-col justify-start overflow-hidden">
+                            <div class="text-[10px] font-bold text-yellow-300 mb-1.5 text-center uppercase tracking-wider border-b border-amber-700/60 pb-1">
+                                Mots à trouver (<span id="foundCount">0</span>/<span id="totalCount">0</span>)
+                            </div>
+                            <div id="wordList" class="flex flex-wrap gap-1.5 overflow-y-auto max-h-[310px] pr-1">
+                                <!-- Words Pills -->
+                            </div>
+                        </div>
+
+                        <!-- Mascots Barnabé & Célestine Left Panel Badge -->
+                        <div class="parchment-bg p-2 flex items-center justify-around border-2 border-amber-800">
+                            <div class="text-center">
+                                <span class="text-2xl block">🐭</span>
+                                <span class="text-[9px] font-bold text-amber-950">Barnabé</span>
+                            </div>
+                            <span class="text-xs text-amber-800 font-bold">Word Saga</span>
+                            <div class="text-center">
+                                <span class="text-2xl block">🐹</span>
+                                <span class="text-[9px] font-bold text-amber-950">Célestine</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT SIDE GRID BOARD WRAPPER (460px x 620px Area) -->
+                    <div class="w-[465px] h-[620px] parchment-bg p-3 shadow-2xl flex items-center justify-center shrink-0">
+                        <div id="gridContainer" class="grid gap-1 w-full h-full max-h-[440px] max-w-[440px] p-1.5 bg-amber-950/40 rounded-xl border-2 border-amber-800/60 touch-none">
+                            <!-- Grid cells -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- VICTORY MODAL POPUP -->
+                <div id="victoryModal" class="absolute inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+                    <div class="parchment-bg max-w-sm w-full p-5 flex flex-col items-center text-center relative border-4 border-amber-800 shadow-2xl">
+                        <h2 class="wordsaga-title text-2xl mb-1">NIVEAU RÉUSSI !</h2>
+                        <p id="vSubtitle" class="text-xs text-amber-950 mb-2 font-bold">Barnabé & Célestine vous félicitent !</p>
+
+                        <div class="flex justify-center gap-2 my-2">
+                            <span id="vStar1" class="text-4xl transition-transform duration-300 transform scale-0">⭐</span>
+                            <span id="vStar2" class="text-5xl transition-transform duration-300 transform scale-0 -translate-y-2">⭐</span>
+                            <span id="vStar3" class="text-4xl transition-transform duration-300 transform scale-0">⭐</span>
+                        </div>
+
+                        <div class="w-full bg-amber-950/90 rounded-xl p-3 my-2 border border-amber-500 text-left space-y-1 text-xs text-white">
+                            <div class="flex justify-between"><span class="text-amber-200">Score Mots:</span><span id="vWordsBonus" class="text-yellow-300 font-bold">+1000</span></div>
+                            <div class="flex justify-between"><span class="text-amber-200">Bonus Temps:</span><span id="vTimeBonus" class="text-yellow-300 font-bold">+250</span></div>
+                            <hr class="border-amber-700">
+                            <div class="flex justify-between text-xs font-black"><span class="text-white">SCORE FINAL:</span><span id="vFinalScore" class="text-yellow-400 text-base">1250</span></div>
+                        </div>
+
+                        <button onclick="shareOnFacebook()" class="bg-[#4267b2] hover:bg-[#365899] text-white text-xs font-bold py-1.5 px-3 rounded w-full mb-3 flex items-center justify-center gap-1">
+                            📘 Publier sur Facebook (2011)
+                        </button>
+
+                        <div class="flex gap-3 justify-center w-full">
+                            <button onclick="showMap()" class="king-btn btn-blue text-xs px-4 py-2">Carte</button>
+                            <button id="nextLevelBtn" onclick="nextLevel()" class="king-btn btn-green text-xs px-5 py-2">Suivant &raquo;</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO FX ENGINE -->
+    <script>
+        const AudioFX = {
+            ctx: null,
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+            playSelect() {
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(420, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(750, this.ctx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.05);
+            },
+            playWordFound() {
+                this.init();
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.05);
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime + idx * 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.05 + 0.15);
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(this.ctx.currentTime + idx * 0.05);
+                    osc.stop(this.ctx.currentTime + idx * 0.05 + 0.15);
+                });
+            },
+            playVictory() {
+                this.init();
+                [440, 554.37, 659.25, 880, 1108.73].forEach((freq, i) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime + i * 0.08);
+                    gain.gain.setValueAtTime(0.2, this.ctx.currentTime + i * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + i * 0.08 + 0.3);
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(this.ctx.currentTime + i * 0.08);
+                    osc.stop(this.ctx.currentTime + i * 0.08 + 0.3);
+                });
+            }
+        };
+    </script>
+
+    <!-- GAME LOGIC & 11s SPLASH SCREEN CONTROLLER -->
+    <script>
+        // SPLASH SCREEN TIMING (Total 11s: 4s Phase 1 EA playdream + 7s Phase 2 Game Intro)
+        function initSplashScreen() {
+            const splash1 = document.getElementById('splash1');
+            const splash2 = document.getElementById('splash2');
+            const splashContainer = document.getElementById('splashContainer');
+            const progressBar = document.getElementById('splashProgressBar');
+            const loadPercent = document.getElementById('loadPercent');
+
+            let startTime = Date.now();
+            const totalDuration = 11000; // 11s
+
+            const interval = setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(100, Math.floor((elapsed / totalDuration) * 100));
+
+                if (progressBar) progressBar.style.width = `${progress}%`;
+                if (loadPercent) loadPercent.innerText = `${progress}%`;
+
+                // At 4 seconds (4000ms): Fade transition from EA playdream to Game Intro
+                if (elapsed >= 4000 && !splash2.classList.contains('active-phase')) {
+                    splash2.classList.add('active-phase');
+                    splash1.style.opacity = '0';
+                    splash2.style.opacity = '1';
+                    splash2.style.pointerEvents = 'auto';
+                }
+
+                // At 11 seconds (11000ms): Hide Splash screen completely
+                if (elapsed >= totalDuration) {
+                    clearInterval(interval);
+                    splashContainer.style.opacity = '0';
+                    splashContainer.style.pointerEvents = 'none';
+                    setTimeout(() => {
+                        splashContainer.style.display = 'none';
+                    }, 1500);
+                }
+            }, 50);
+        }
+
+        // 10 WORLDS DEFINITION
+        const WORLDS = [
+            { id: 1, name: "La Cuisine des Souris", range: [1, 10] },
+            { id: 2, name: "La Véritable Bibliothèque", range: [11, 20] },
+            { id: 3, name: "Le Jardin des Lettres", range: [21, 30] },
+            { id: 4, name: "La Cave à Fromages", range: [31, 40] },
+            { id: 5, name: "L'Atelier d'Imprimerie", range: [41, 50] },
+            { id: 6, name: "Le Royaume de la Grammaire", range: [51, 60] },
+            { id: 7, name: "L'Observatoire Alphabétique", range: [61, 70] },
+            { id: 8, name: "La Vallée des Scribes", range: [71, 80] },
+            { id: 9, name: "L'Île des Parchemins", range: [81, 90] },
+            { id: 10, name: "Le Château des Mots", range: [91, 100] }
+        ];
+
+        // FRENCH DICTIONARY
+        const DICTIONARY = [
+            "FROMAGE", "SOURIS", "MULOT", "PLUME", "ALPHABET", "LETTRE", "MOTS", "GRAINE",
+            "GATEAU", "FARINE", "POMME", "POIRE", "TARTINE", "SUCRE", "ROSE", "HERBE",
+            "ARBRE", "FORET", "JARDIN", "FLEUR", "SOLEIL", "NUAGE", "ETOILE", "MONDE",
+            "PAGE", "ROMAN", "POEME", "ENCRE", "PAPIER", "STYLO", "TOME", "AUTEUR",
+            "LOUPE", "CARTE", "SAVANT", "TRÉSOR", "CHÂTEAU", "COURONNE", "REINE", "GARDE",
+            "HEURE", "TEMPS", "MINUTE", "CADRAN", "ROUE", "MINUIT", "MALLE", "LAMPE",
+            "SAGESSE", "MAGIQUE", "SAVOIR", "VICTOIRE", "GLOIRE", "MONTAGNE", "RIVIERE", "BATEAU",
+            "VALLEE", "VILLAGE", "CHAMP", "TRACTEUR", "FUMEE", "CHEMINEE", "FENETRE", "PORTE",
+            "ISLAND", "OCEAN", "NAVIRE", "PIRATE", "COFFRE", "VOILE", "BOUSSOLE", "ANCRE",
+            "ROCHER", "SABLE", "PLAGE", "CHALEUR", "HIVER", "NEIGE", "GLACE", "FLOCON",
+            "NATURE", "COULEUR", "PINCEAU", "TOILE", "IMAGE", "DESSIN", "ARTISTE",
+            "MUSIQUE", "NOTE", "PIANO", "GUITARE", "CHANT", "HARPE", "SONATE", "RYTHME"
+        ];
+
+        let currentWorldIdx = 0;
+        let currentLevelNum = 1;
+        let userProgress = JSON.parse(localStorage.getItem('wordsaga_ea_100_progress')) || { maxLevel: 1, scores: {} };
+        let gridData = [];
+        let placedWords = [];
+        let foundWords = new Set();
+        let isSelecting = false;
+        let selectedCells = [];
+        let startCell = null;
+        let currentScore = 0;
+        let levelTimer = 0;
+        let timerInterval = null;
+
+        // Particle Canvas inside 740x700 frame
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function createConfetti(x, y) {
+            const colors = ['#ffd700', '#ff9900', '#ff3366', '#33ccff', '#fffa78', '#ffffff'];
+            for (let i = 0; i < 35; i++) {
+                particles.push({
+                    x: x || 370,
+                    y: y || 350,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.7) * 10,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 7 + 3,
+                    rotation: Math.random() * 360,
+                    rSpeed: (Math.random() - 0.5) * 8,
+                    life: 1
+                });
+            }
+        }
+
+        function updateParticles() {
+            ctx.clearRect(0, 0, 740, 700);
+            particles.forEach((p, index) => {
+                p.x += p.vx; p.y += p.vy; p.vy += 0.22; p.life -= 0.015; p.rotation += p.rSpeed;
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = Math.max(0, p.life);
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                ctx.restore();
+                if (p.life <= 0) particles.splice(index, 1);
+            });
+            requestAnimationFrame(updateParticles);
+        }
+        updateParticles();
+
+        // Sauvegarde automatique de la progression dans le navigateur.
+        function saveProgress() {
+            try {
+                localStorage.setItem('wordsaga_ea_100_progress', JSON.stringify(userProgress));
+                const status = document.getElementById('saveStatus');
+                if (status) status.innerText = '💾 Progression sauvegardée';
+            } catch (error) {
+                const status = document.getElementById('saveStatus');
+                if (status) status.innerText = '⚠️ Sauvegarde indisponible';
+                console.error('Impossible de sauvegarder la progression :', error);
+            }
+        }
+
+        // Exporte une copie de la progression au format JSON.
+        function downloadProgress() {
+            const exportData = {
+                game: 'Word Saga - EA playdream (2011)',
+                formatVersion: 1,
+                exportedAt: new Date().toISOString(),
+                progress: userProgress
+            };
+
+            const blob = new Blob(
+                [JSON.stringify(exportData, null, 2)],
+                { type: 'application/json;charset=utf-8' }
+            );
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'word-saga-progression.json';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+
+            const status = document.getElementById('saveStatus');
+            if (status) status.innerText = '⬇ Progression téléchargée';
+        }
+
+        // Importe une sauvegarde JSON précédemment téléchargée.
+        function importProgress(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            const status = document.getElementById('saveStatus');
+            const reader = new FileReader();
+
+            reader.onload = function () {
+                try {
+                    const imported = JSON.parse(reader.result);
+
+                    if (
+                        !imported ||
+                        imported.game !== 'Word Saga - EA playdream (2011)' ||
+                        !imported.progress ||
+                        !Number.isInteger(imported.progress.maxLevel) ||
+                        imported.progress.maxLevel < 1 ||
+                        imported.progress.maxLevel > 100 ||
+                        !imported.progress.scores ||
+                        typeof imported.progress.scores !== 'object' ||
+                        Array.isArray(imported.progress.scores)
+                    ) {
+                        throw new Error('Format de sauvegarde non reconnu.');
+                    }
+
+                    // Ne conserver que les scores valides des niveaux du jeu.
+                    const cleanScores = {};
+                    for (let level = 1; level <= 100; level++) {
+                        const score = imported.progress.scores[level];
+                        if (score && typeof score === 'object') {
+                            cleanScores[level] = {
+                                stars: Number.isFinite(Number(score.stars))
+                                    ? Math.max(0, Math.min(3, Math.floor(Number(score.stars))))
+                                    : 0,
+                                score: Number.isFinite(Number(score.score))
+                                    ? Math.max(0, Math.floor(Number(score.score)))
+                                    : 0
+                            };
+                        }
+                    }
+
+                    if (!confirm('Remplacer la progression actuelle par celle du fichier sélectionné ?')) {
+                        event.target.value = '';
+                        return;
+                    }
+
+                    userProgress = {
+                        maxLevel: imported.progress.maxLevel,
+                        scores: cleanScores
+                    };
+                    saveProgress();
+                    currentWorldIdx = Math.min(
+                        WORLDS.length - 1,
+                        Math.floor((userProgress.maxLevel - 1) / 10)
+                    );
+                    showMap();
+                    if (status) status.innerText = '⬆ Progression importée avec succès';
+                } catch (error) {
+                    if (status) status.innerText = '⚠️ Fichier de progression invalide';
+                    alert("Impossible d'importer ce fichier. Sélectionne un fichier JSON de progression Word Saga.");
+                    console.error('Erreur lors de l’importation :', error);
+                } finally {
+                    event.target.value = '';
+                }
+            };
+
+            reader.onerror = function () {
+                if (status) status.innerText = '⚠️ Lecture du fichier impossible';
+                event.target.value = '';
+            };
+
+            reader.readAsText(file);
+        }
+
+        function resetProgress() {
+            if (confirm("Réinitialiser toute votre aventure aux 100 niveaux de Word Saga ?")) {
+                userProgress = { maxLevel: 1, scores: {} };
+                saveProgress();
+                renderMap();
+            }
+        }
+
+        function changeWorld(delta) {
+            currentWorldIdx = Math.max(0, Math.min(WORLDS.length - 1, currentWorldIdx + delta));
+            renderMap();
+        }
+
+        function renderMap() {
+            const world = WORLDS[currentWorldIdx];
+            document.getElementById('worldTitle').innerText = `Monde ${world.id}: ${world.name}`;
+            document.getElementById('worldSub').innerText = `Niveaux ${world.range[0]} à ${world.range[1]}`;
+
+            const menu = document.getElementById('worldListMenu');
+            menu.innerHTML = '';
+            WORLDS.forEach((w, idx) => {
+                const item = document.createElement('div');
+                item.className = `p-1 rounded cursor-pointer font-bold ${idx === currentWorldIdx ? 'bg-amber-200 text-amber-950 border border-amber-400' : 'hover:bg-gray-200 text-gray-700'}`;
+                item.innerText = `${w.id}. ${w.name}`;
+                item.onclick = () => { currentWorldIdx = idx; renderMap(); };
+                menu.appendChild(item);
+            });
+
+            const mapContainer = document.getElementById('sagaMap');
+            mapContainer.innerHTML = '';
+
+            const startLvl = world.range[0];
+            const endLvl = world.range[1];
+
+            for (let lvl = startLvl; lvl <= endLvl; lvl++) {
+                const isUnlocked = lvl <= userProgress.maxLevel;
+                const isCurrent = lvl === userProgress.maxLevel;
+                const scoreData = userProgress.scores[lvl] || { stars: 0, score: 0 };
+
+                const nodeWrapper = document.createElement('div');
+                nodeWrapper.className = 'flex items-center gap-3 w-full justify-center relative z-10';
+                const xOffset = Math.sin((lvl - startLvl) * 0.9) * 85;
+                nodeWrapper.style.transform = `translateX(${xOffset}px)`;
+
+                const node = document.createElement('div');
+                node.className = `map-node ${!isUnlocked ? 'locked' : ''} ${isCurrent ? 'current' : ''}`;
+                node.innerHTML = isUnlocked ? lvl : '🔒';
+                if (isUnlocked) node.onclick = () => startLevel(lvl);
+
+                const infoBox = document.createElement('div');
+                infoBox.className = 'parchment-bg px-2.5 py-1 text-left min-w-[110px] shadow border-2 border-amber-800';
+                infoBox.innerHTML = `
+                    <div class="text-[10px] font-black text-amber-950">Niveau ${lvl}</div>
+                    <div class="flex items-center gap-0.5 mt-0.5">
+                        ${[1,2,3].map(s => `<span class="text-[10px] ${s <= scoreData.stars ? '' : 'grayscale opacity-40'}">⭐</span>`).join('')}
+                        <span class="text-[9px] text-amber-900 ml-1 font-bold">${scoreData.score || 0} pts</span>
+                    </div>
+                `;
+
+                nodeWrapper.appendChild(node);
+                nodeWrapper.appendChild(infoBox);
+                mapContainer.appendChild(nodeWrapper);
+            }
+        }
+
+        function getLevelData(lvlNum) {
+            const worldIdx = Math.floor((lvlNum - 1) / 10);
+            const world = WORLDS[worldIdx];
+            const gridSize = Math.min(12, 8 + Math.floor((lvlNum - 1) / 25));
+            const wordCount = Math.min(8, 4 + Math.floor((lvlNum - 1) / 15));
+
+            const shuffled = [...DICTIONARY].sort(() => 0.5 - Math.random());
+            const words = shuffled.slice(0, wordCount);
+
+            const baseStar = lvlNum * 120;
+            return {
+                id: lvlNum,
+                worldName: world.name,
+                size: gridSize,
+                words: words,
+                stars: [baseStar, Math.floor(baseStar * 1.8), Math.floor(baseStar * 2.5)]
+            };
+        }
+
+        function showMap() {
+            document.getElementById('gameView').classList.add('hidden');
+            document.getElementById('gameView').classList.remove('flex');
+            document.getElementById('victoryModal').classList.add('hidden');
+            document.getElementById('mapView').classList.remove('hidden');
+            clearInterval(timerInterval);
+            renderMap();
+        }
+
+        function startLevel(lvlNum) {
+            currentLevelNum = lvlNum;
+            const level = getLevelData(lvlNum);
+
+            document.getElementById('mapView').classList.add('hidden');
+            document.getElementById('gameView').classList.remove('hidden');
+            document.getElementById('gameView').classList.add('flex');
+
+            document.getElementById('levelTitle').innerText = `Niveau ${level.id}`;
+            document.getElementById('levelTheme').innerText = level.worldName;
+            document.getElementById('foundCount').innerText = '0';
+            document.getElementById('totalCount').innerText = level.words.length;
+
+            currentScore = 0; levelTimer = 0; foundWords.clear();
+            updateScoreDisplay(level);
+            generateGrid(level);
+            renderWordList(level.words);
+
+            clearInterval(timerInterval);
+            document.getElementById('timerDisplay').innerText = '⏱️ 00:00';
+            timerInterval = setInterval(() => {
+                levelTimer++;
+                const mins = String(Math.floor(levelTimer / 60)).padStart(2, '0');
+                const secs = String(levelTimer % 60).padStart(2, '0');
+                document.getElementById('timerDisplay').innerText = `⏱️ ${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function generateGrid(level) {
+            const size = level.size;
+            gridData = Array(size).fill(null).map(() => Array(size).fill(''));
+            placedWords = [];
+
+            const dirs = [
+                { r: 0, c: 1 },  { r: 1, c: 0 },   { r: 1, c: 1 },   { r: -1, c: 1 },
+                { r: 0, c: -1 }, { r: -1, c: 0 },  { r: -1, c: -1 }, { r: 1, c: -1 }
+            ];
+
+            const cleanWords = level.words.map(w => w.normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+
+            cleanWords.forEach((word, wordIdx) => {
+                let placed = false; let attempts = 0;
+                while (!placed && attempts < 300) {
+                    attempts++;
+                    const dir = dirs[Math.floor(Math.random() * dirs.length)];
+                    const startR = Math.floor(Math.random() * size);
+                    const startC = Math.floor(Math.random() * size);
+
+                    let endR = startR + dir.r * (word.length - 1);
+                    let endC = startC + dir.c * (word.length - 1);
+
+                    if (endR >= 0 && endR < size && endC >= 0 && endC < size) {
+                        let fits = true; let coords = [];
+                        for (let i = 0; i < word.length; i++) {
+                            let r = startR + dir.r * i; let c = startC + dir.c * i;
+                            if (gridData[r][c] !== '' && gridData[r][c] !== word[i]) { fits = false; break; }
+                            coords.push({ r, c });
+                        }
+                        if (fits) {
+                            coords.forEach((pos, i) => gridData[pos.r][pos.c] = word[i]);
+                            placedWords.push({ original: level.words[wordIdx], clean: word, coords });
+                            placed = true;
+                        }
+                    }
+                }
+            });
+
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    if (gridData[r][c] === '') gridData[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
+                }
+            }
+
+            renderGridUI(size);
+        }
+
+        function renderGridUI(size) {
+            const container = document.getElementById('gridContainer');
+            container.style.gridTemplateColumns = `repeat(${size}, minmax(0, 1fr))`;
+            container.innerHTML = '';
+
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'letter-tile';
+                    cell.innerText = gridData[r][c];
+                    cell.style.fontSize = size > 10 ? '0.9rem' : '1.1rem';
+                    cell.dataset.r = r; cell.dataset.c = c;
+
+                    cell.addEventListener('mousedown', (e) => startSelection(r, c, e));
+                    cell.addEventListener('mouseenter', () => updateSelection(r, c));
+                    cell.addEventListener('touchstart', (e) => { e.preventDefault(); startSelection(r, c, e); });
+
+                    container.appendChild(cell);
+                }
+            }
+
+            container.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (target && target.classList.contains('letter-tile')) {
+                    updateSelection(parseInt(target.dataset.r), parseInt(target.dataset.c));
+                }
+            });
+
+            window.addEventListener('mouseup', endSelection);
+            window.addEventListener('touchend', endSelection);
+        }
+
+        function renderWordList(words) {
+            const container = document.getElementById('wordList');
+            container.innerHTML = '';
+            words.forEach(word => {
+                const pill = document.createElement('div');
+                pill.className = 'word-pill';
+                pill.id = `pill-${word}`;
+                pill.innerText = word;
+                container.appendChild(pill);
+            });
+        }
+
+        function startSelection(r, c) {
+            isSelecting = true; startCell = { r, c }; selectedCells = [{ r, c }];
+            AudioFX.playSelect(); highlightSelectedCells();
+        }
+
+        function updateSelection(r, c) {
+            if (!isSelecting || !startCell) return;
+            const dr = r - startCell.r; const dc = c - startCell.c;
+
+            if (dr === 0 || dc === 0 || Math.abs(dr) === Math.abs(dc)) {
+                const steps = Math.max(Math.abs(dr), Math.abs(dc));
+                const stepR = dr === 0 ? 0 : dr / steps;
+                const stepC = dc === 0 ? 0 : dc / steps;
+
+                const newSelection = [];
+                for (let i = 0; i <= steps; i++) {
+                    newSelection.push({ r: startCell.r + stepR * i, c: startCell.c + stepC * i });
+                }
+
+                if (JSON.stringify(newSelection) !== JSON.stringify(selectedCells)) {
+                    selectedCells = newSelection; AudioFX.playSelect(); highlightSelectedCells();
+                }
+            }
+        }
+
+        function highlightSelectedCells() {
+            document.querySelectorAll('.letter-tile').forEach(cell => {
+                if (!cell.classList.contains('found')) cell.classList.remove('selected');
+            });
+            selectedCells.forEach(pos => {
+                const cell = document.querySelector(`.letter-tile[data-r="${pos.r}"][data-c="${pos.c}"]`);
+                if (cell && !cell.classList.contains('found')) cell.classList.add('selected');
+            });
+        }
+
+        function endSelection() {
+            if (!isSelecting) return;
+            isSelecting = false;
+
+            placedWords.forEach(pw => {
+                if (foundWords.has(pw.original)) return;
+                if (isSameCoords(selectedCells, pw.coords) || isSameCoords(selectedCells, [...pw.coords].reverse())) {
+                    markWordAsFound(pw);
+                }
+            });
+
+            document.querySelectorAll('.letter-tile').forEach(cell => cell.classList.remove('selected'));
+            selectedCells = []; startCell = null;
+        }
+
+        function isSameCoords(arr1, arr2) {
+            if (arr1.length !== arr2.length) return false;
+            return arr1.every((pt, i) => pt.r === arr2[i].r && pt.c === arr2[i].c);
+        }
+
+        function markWordAsFound(wordObj) {
+            foundWords.add(wordObj.original);
+            AudioFX.playWordFound();
+
+            wordObj.coords.forEach(pos => {
+                const cell = document.querySelector(`.letter-tile[data-r="${pos.r}"][data-c="${pos.c}"]`);
+                if (cell) cell.classList.add('found');
+            });
+
+            const pill = document.getElementById(`pill-${wordObj.original}`);
+            if (pill) pill.classList.add('found-pill');
+
+            const frameRect = document.getElementById('gameFrame').getBoundingClientRect();
+            const firstCell = document.querySelector(`.letter-tile[data-r="${wordObj.coords[0].r}"][data-c="${wordObj.coords[0].c}"]`);
+            if (firstCell) {
+                const rect = firstCell.getBoundingClientRect();
+                createConfetti(rect.left - frameRect.left + rect.width / 2, rect.top - frameRect.top + rect.height / 2);
+            }
+
+            currentScore += wordObj.original.length * 60;
+            updateScoreDisplay(getLevelData(currentLevelNum));
+            document.getElementById('foundCount').innerText = foundWords.size;
+
+            if (foundWords.size === placedWords.length) setTimeout(handleVictory, 500);
+        }
+
+        function useHint() {
+            const unFound = placedWords.filter(pw => !foundWords.has(pw.original));
+            if (unFound.length === 0) return;
+            const target = unFound[Math.floor(Math.random() * unFound.length)];
+            
+            target.coords.forEach(pos => {
+                const cell = document.querySelector(`.letter-tile[data-r="${pos.r}"][data-c="${pos.c}"]`);
+                if (cell) cell.classList.add('hinted');
+            });
+
+            setTimeout(() => {
+                document.querySelectorAll('.letter-tile').forEach(c => c.classList.remove('hinted'));
+            }, 1800);
+        }
+
+        function updateScoreDisplay(level) {
+            document.getElementById('scoreDisplay').innerText = currentScore;
+            const pct = Math.min(100, (currentScore / level.stars[2]) * 100);
+
+            document.getElementById('starFill').style.width = `${pct}%`;
+            document.getElementById('star1').className = currentScore >= level.stars[0] ? 'filter-none opacity-100' : 'opacity-40 grayscale';
+            document.getElementById('star2').className = currentScore >= level.stars[1] ? 'filter-none opacity-100' : 'opacity-40 grayscale';
+            document.getElementById('star3').className = currentScore >= level.stars[2] ? 'filter-none opacity-100' : 'opacity-40 grayscale';
+        }
+
+        function shareOnFacebook() {
+            alert("Score publié avec succès sur votre Mur Facebook (Simulé EA playdream 2011) !");
+        }
+
+        function handleVictory() {
+            clearInterval(timerInterval);
+            AudioFX.playVictory();
+            createConfetti(370, 350);
+
+            const level = getLevelData(currentLevelNum);
+            const timeBonus = Math.max(0, 400 - levelTimer * 3);
+            const finalScore = currentScore + timeBonus;
+
+            let earnedStars = 1;
+            if (finalScore >= level.stars[1]) earnedStars = 2;
+            if (finalScore >= level.stars[2]) earnedStars = 3;
+
+            if (currentLevelNum + 1 > userProgress.maxLevel && currentLevelNum < 100) {
+                userProgress.maxLevel = currentLevelNum + 1;
+            }
+            userProgress.scores[currentLevelNum] = {
+                stars: Math.max(earnedStars, userProgress.scores[currentLevelNum]?.stars || 0),
+                score: Math.max(finalScore, userProgress.scores[currentLevelNum]?.score || 0)
+            };
+            saveProgress();
+
+            document.getElementById('vWordsBonus').innerText = `+${currentScore} pts`;
+            document.getElementById('vTimeBonus').innerText = `+${timeBonus} pts`;
+            document.getElementById('vFinalScore').innerText = finalScore;
+
+            const modal = document.getElementById('victoryModal');
+            modal.classList.remove('hidden');
+
+            const stars = [document.getElementById('vStar1'), document.getElementById('vStar2'), document.getElementById('vStar3')];
+            stars.forEach(s => s.classList.add('scale-0'));
+
+            for (let i = 0; i < earnedStars; i++) {
+                setTimeout(() => {
+                    stars[i].classList.remove('scale-0');
+                    stars[i].classList.add('scale-100');
+                }, (i + 1) * 300);
+            }
+
+            const nextBtn = document.getElementById('nextLevelBtn');
+            if (currentLevelNum >= 100) {
+                nextBtn.innerText = 'Victoire Absolue !';
+                nextBtn.onclick = showMap;
+            } else {
+                nextBtn.innerText = 'Suivant »';
+                nextBtn.onclick = nextLevel;
+            }
+        }
+
+        function nextLevel() {
+            document.getElementById('victoryModal').classList.add('hidden');
+            if (currentLevelNum < 100) {
+                currentWorldIdx = Math.floor(currentLevelNum / 10);
+                startLevel(currentLevelNum + 1);
+            } else {
+                showMap();
+            }
+        }
+
+        window.addEventListener('pagehide', saveProgress);
+
+        window.onload = () => {
+            initSplashScreen();
+            renderMap();
+        };
+    </script>
+</body>
+</html>
